@@ -8,7 +8,7 @@
     <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Communication.xml">
         <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
     </edmx:Reference>
-    <edmx:Reference Uri="/v2/northwind/northwind.svc/$metadata">
+    <edmx:Reference Uri="/v2/northwind/northwind.svc/$metadata"> <!--DB que traera los datos en el reporte -->
         <edmx:Include Namespace="NorthwindModel"/>
         <edmx:Include Namespace="ODataWeb.Northwind.Model"/>
     </edmx:Reference>
@@ -21,7 +21,7 @@
         </Annotations >
 
         <Annotations Target="NorthwindModel.Product/ProductName" >
-            <Annotation Term="Common.Label" String="{@i18n>productName}"  />
+            <Annotation Term="Common.Label" String="{@i18n>productName}"  /> <!--Common es alias de la linea3-->
         </Annotations >
 
         <Annotations Target="NorthwindModel.Product/UnitPrice" >
