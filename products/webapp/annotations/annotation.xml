@@ -1,86 +1,302 @@
 <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities" />
+    </edmx:Reference>
     <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
-        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common" />
     </edmx:Reference>
     <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
-        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />
     </edmx:Reference>
     <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Communication.xml">
-        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication" />
     </edmx:Reference>
-    <edmx:Reference Uri="/v2/northwind/northwind.svc/$metadata"> <!--DB que traera los datos en el reporte -->
-        <edmx:Include Namespace="NorthwindModel"/>
-        <edmx:Include Namespace="ODataWeb.Northwind.Model"/>
+    <edmx:Reference Uri="/v2/northwind/northwind.svc/$metadata">
+        <!--DB que traera los datos en el reporte -->
+        <edmx:Include Namespace="NorthwindModel" />
+        <edmx:Include Namespace="ODataWeb.Northwind.Model" />
     </edmx:Reference>
     <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="local">
+            <!--cambiar el nombre a las columnas  -->
+            <Annotations Target="NorthwindModel.Product/ProductID">
+                <Annotation Term="Common.Label" String="{@i18n>productId}" />
+                <Annotation Term="Common.Text" Path="ProductName" />
+                <!--juntar la columna id con la ProductName -->
+            </Annotations>
 
-        <!--cambiar el nombre a las columnas  -->
-        <Annotations Target="NorthwindModel.Product/ProductID" >
-            <Annotation Term="Common.Label" String="{@i18n>productId}"  />
-        </Annotations >
+            <Annotations Target="NorthwindModel.Product/ProductName">
+                <Annotation Term="Common.Label" String="{@i18n>productName}" />
+                <!--Common es alias de la linea3-->
+            </Annotations>
 
-        <Annotations Target="NorthwindModel.Product/ProductName" >
-            <Annotation Term="Common.Label" String="{@i18n>productName}"  /> <!--Common es alias de la linea3-->
-        </Annotations >
+            <Annotations Target="NorthwindModel.Product/UnitPrice">
+                <Annotation Term="Common.Label" String="{@i18n>unitPrice}" />
+            </Annotations>
 
-        <Annotations Target="NorthwindModel.Product/UnitPrice" >
-            <Annotation Term="Common.Label" String="{@i18n>unitPrice}"  />
-        </Annotations >
+            <Annotations Target="NorthwindModel.Product/UnitsInStock">
+                <Annotation Term="Common.Label" String="{@i18n>UnitsInStock}" />
+            </Annotations>
 
-        <Annotations Target="NorthwindModel.Product/UnitsInStock" >
-            <Annotation Term="Common.Label" String="{@i18n>UnitsInStock}"  />
-        </Annotations >
+            <Annotations Target="NorthwindModel.Category/CategoryName">
+                <Annotation Term="Common.Label" String="{@i18n>category}" />
+            </Annotations>
 
-        <Annotations Target="NorthwindModel.Category/CategoryName" >
-            <Annotation Term="Common.Label" String="{@i18n>category}"  />
-        </Annotations >
+            <Annotations Target="NorthwindModel.Supplier/CompanyName">
+                <Annotation Term="Common.Label" String="{@i18n>Supplier}" />
+            </Annotations>
 
-        <Annotations Target="NorthwindModel.Supplier/CompanyName" >
-            <Annotation Term="Common.Label" String="{@i18n>Supplier}"  />
-        </Annotations >
+            <!--crear vauleList de catrgotyName -->
+            <Annotations Target="NorthwindModel.Product/CategoryID">
+                <Annotation Term="Common.Label" String="{@i18n>category}" />
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="CollectionPath" String="Categories" />
+                        <!--permite hacer un mapeo hacia otraEntidad "categories"-->
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="CategoryID" />
+                                    <!-- dato por el cual va a filtar-->
+                                    <PropertyValue Property="ValueListProperty" String="CategoryID" />
+                                    <!--donde vamos a almacenar el campo CategoryId linea anteriro-->
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CategoryName" />
+                                    <!--muestra solo el nombre de la categoria -->
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
 
-        <Annotations Target="NorthwindModel.Product">
+            <!--para traer el nombre de la categoria no lo el id-->
+            <Annotations Target="NorthwindModel.Category/CategoryID">
+                <Annotation Term="Common.Label" String="{@i18n>category}" />
+                <Annotation Term="Common.Text" Path="CategoryName" />
+                <Annotation Term="UI.Hidden" />
+                <!--ocultar id -->
+            </Annotations>
 
-            <Annotation Term="Common.SemanticKey" > <!--para resaltar una columna-->
-                <Collection >
-                    <PropertyPath >ProductID</PropertyPath> <!--para resaltar los datos de la  columna productID-->
-                </Collection>
-            </Annotation>
+            <!--para traer el nombre de la Supplier no lo el id-->
+            <Annotations Target="NorthwindModel.Product/SupplierID">
+                <Annotation Term="Common.Label" String="{@i18n>Supplier}" />
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="CollectionPath" String="Suppliers" />
+                        <!--mapeo a la entida suppliers -->
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="SupplierID" />
+                                    <!--parametro de entrada de la entidad proveedores -->
+                                    <PropertyValue Property="ValueListProperty" String="SupplierID" />
+                                    <!--parametro de salida, de la entidad productp -->
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CompanyName" />
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
 
-<!--para traer los datos de la db las columnas que queremos  -->
-            <Annotation Term="UI.LineItem" >
-                <Collection >
-                    <Record Type="UI.DataField" >
-                        <PropertyValue Property="Value" Path="ProductID"/>
-                    </Record >
-                    
-                    <Record Type="UI.DataField" >
+            <Annotations Target="NorthwindModel.Supplier/SupplierID">
+                <Annotation Term="Common.Text" Path="CompanyName" />
+                <Annotation Term="UI.Hidden" />
+            </Annotations>
+
+            <!--*Restriccion* -quitar el search que viene predeterminado-->
+            <Annotations Target="ODataWeb.Northwind.Model.NorthwindEntities/Products">
+                <Annotation Term="Capabilities.SearchRestrictions">
+                    <Record Type="Capabilities.SearchRestrictionsType">
+                        <PropertyValue Property="Searchable" Bool="false" />
+                    </Record>
+                </Annotation>
+
+                <!--Busque de acuerdo a lo que estamos escribiendo en el filtro -->
+                <Annotation Term="Capabilities.FilterRestrictions">
+                    <Record Type="Capabilities.FilterRestrictionsType">
+                        <PropertyValue Property="FilterExpressionRestrictions">
+                            <Collection>
+                                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                                    <PropertyValue Property="Property" PropertyPath="ProductName" />
+                                    <PropertyValue Property="AllowedExpressions" String="SearchExpression" />
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+
+            <Annotations Target="NorthwindModel.Product">
+                <!--entidad producto en la que estamos trabajando -->
+
+                <!--Crear filtros-->
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>ProductName</PropertyPath>
+                        <PropertyPath>CategoryID</PropertyPath>
+                        <PropertyPath>SupplierID</PropertyPath>
+                    </Collection>
+                </Annotation>
+
+                <Annotation Term="Common.SemanticKey">
+                    <!--para resaltar una columna-->
+                    <Collection>
+                        <PropertyPath>ProductID</PropertyPath>
+                        <!--para resaltar los datos de la  columna productID-->
+                    </Collection>
+                </Annotation>
+
+                <!--trae el numero de datos que tenemos en DB -->
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="{@i18n>product}" />
+                        <PropertyValue Property="TypeNamePlural" String="{@i18n>appTitle}" />
+                        <!--otra pag object page-->
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="ProductName" />
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="Category/CategoryName" />
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+
+                <Annotation Term="UI.HeaderFacets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.Chart" />
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <!--para traer los datos de la db las columnas que queremos  -->
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ProductID" />
+                        </Record>
+
+                        <!-- <Record Type="UI.DataField" >
                         <PropertyValue Property="Value" Path="ProductName"/>
-                    </Record >
+                    </Record >-->
 
-                    <Record Type="UI.DataField" >
-                        <PropertyValue Property="Value" Path="Category/CategoryName"/> <!--especificar los datos que trae  porque category existe otro -->
-                    </Record >
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Category/CategoryName" />
+                            <!--especificar los datos que trae  porque category existe otro -->
+                        </Record>
 
-                    <Record Type="UI.DataField" >
-                        <PropertyValue Property="Value" Path="Supplier/CompanyName"/>
-                    </Record >
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Supplier/CompanyName" />
+                        </Record>
 
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="UnitPrice" />
+                        </Record>
 
-                    <Record Type="UI.DataField" >
-                        <PropertyValue Property="Value" Path="UnitPrice"/>
-                    </Record >
+                        <Record Type="UI.DataFieldForAnnotation">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.Chart" />
+                            <PropertyValue Property="Label" String="{@i18n>Units In Stock}" />
+                        </Record>
+                    </Collection>
+                </Annotation>
 
-                    <Record Type="UI.DataField" >
-                        <PropertyValue Property="Value" Path="UnitsInStock"/>
-                    </Record >
-        
-                </Collection>
+                <!--rango de stock para el grafico o dimensiones-->
+                <Annotation Term="UI.DataPoint">
+                    <Record Type="UI.DataPointType">
+                        <PropertyValue Property="Value" Path="UnitsInStock" />
+                        <PropertyValue Property="MaximumValue" Decimal="150" />
+                        <PropertyValue Property="MinimumValue" Decimal="0" />
 
+                        <PropertyValue Property="CriticalityCalculation">
+                            <Record Type="UI.CriticalityCalculationType">
+                                <PropertyValue Property="ImprovementDirection" EnumMember="UI.ImprovementDirectionType/Maximize" />
+                                <PropertyValue Property="ToleranceRangeLowValue" Decimal="100" />
+                                <!--valor aceptado -->
+                                <PropertyValue Property="DeviationRangeLowValue" Decimal="20" />
+                                <!--valor ya no aceptado warning -->
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
 
-            </Annotation>
-        </Annotations >
+                <!--Grafico -->
+                <Annotation Term="UI.Chart">
+                    <Record Type="UI.ChartDefinitionType">
+                        <PropertyValue Property="ChartType" EnumMember="UI.ChartType/Bullet" />
+                        <!--representar las medidas -->
+                        <PropertyValue Property="Measures">
+                            <Collection>
+                                <PropertyPath>UnitsInStock</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="MeasureAttributes">
+                            <Collection>
+                                <Record Type="UI.ChartMeasureAttributeType">
+                                    <PropertyValue Property="DataPoint" AnnotationPath="@UI.DataPoint" />
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+
+                <!--informacion del producto  -->
+                <Annotation Term="UI.Identification" Qualifier="Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ProductID" />
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ProductName" />
+                        </Record>
+
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="UnitPrice" />
+                        </Record>
+                    </Collection>
+                </Annotation>
+
+                <Annotation Term="UI.FieldGroup" Qualifier="FirstGroup">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="Category/CategoryName" />
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="Category/Description" />
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.CollectionFacet">
+                            <PropertyValue Property="Facets">
+                                <Collection>
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="Target" AnnotationPath="@UI.Identification#Identification" />
+                                        <PropertyValue Property="Label" String="{@i18n>productInfotmation}" />
+                                    </Record>
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#FirstGroup" />
+                                        <PropertyValue Property="Label" String="{@i18n>categoryInformation}" />
+                                    </Record>
+                                </Collection>
+                            </PropertyValue>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
         </Schema>
     </edmx:DataServices>
 </edmx:Edmx>
