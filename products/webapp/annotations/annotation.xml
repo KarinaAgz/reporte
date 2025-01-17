@@ -8,9 +8,6 @@
     <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
         <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />
     </edmx:Reference>
-    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Communication.xml">
-        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication" />
-    </edmx:Reference>
     <edmx:Reference Uri="/v2/northwind/northwind.svc/$metadata">
         <!--DB que traera los datos en el reporte -->
         <edmx:Include Namespace="NorthwindModel" />
@@ -46,6 +43,19 @@
                 <Annotation Term="Common.Label" String="{@i18n>Supplier}" />
             </Annotations>
 
+            <Annotations Target="NorthwindModel.Supplier/ContactName"  >
+                <Annotation Term="Common.Label" String="{@i18n>contactName}"/>
+            </Annotations >
+
+             <Annotations Target="NorthwindModel.Supplier/ContactTitle">
+                 <Annotation Term="Common.Label" String="{@i18n>contactTitle}"/>
+             </Annotations>
+
+            <!--aparece el nombre descripcion en la pag  del object  -->
+             <Annotations Target="NorthwindModel.Category/Description">
+                <Annotation  Term="Common.Label" String="{@i18n>description}"/>
+                 
+             </Annotations>
             <!--crear vauleList de catrgotyName -->
             <Annotations Target="NorthwindModel.Product/CategoryID">
                 <Annotation Term="Common.Label" String="{@i18n>category}" />
@@ -203,7 +213,7 @@
 
                         <Record Type="UI.DataFieldForAnnotation">
                             <PropertyValue Property="Target" AnnotationPath="@UI.Chart" />
-                            <PropertyValue Property="Label" String="{@i18n>Units In Stock}" />
+                            <PropertyValue Property="Label" String="{@i18n>unitsInStock}" />
                         </Record>
                     </Collection>
                 </Annotation>
@@ -270,11 +280,34 @@
                                 <Record Type="UI.DataField">
                                     <PropertyValue Property="Value" Path="Category/CategoryName" />
                                 </Record>
+
                                 <Record Type="UI.DataField">
                                     <PropertyValue Property="Value" Path="Category/Description" />
                                 </Record>
                             </Collection>
                         </PropertyValue>
+                    </Record>
+                </Annotation>
+
+                <!--este grupo muestra la info de proveedor en el la pag object -->
+                <Annotation Term="UI.FieldGroup" Qualifier="SecondGroup">
+                    <Record Type="UI.FieldGroupType">
+                    <PropertyValue Property="Data">
+                        <Collection>
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="Supplier/CompanyName"/>
+                            </Record>
+
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="Supplier/ContactName"/>
+                            </Record>
+
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value"  Path="Supplier/ContactTitle"/>
+                            </Record>
+                        </Collection>
+                    </PropertyValue>
+                        
                     </Record>
                 </Annotation>
 
@@ -287,15 +320,109 @@
                                         <PropertyValue Property="Target" AnnotationPath="@UI.Identification#Identification" />
                                         <PropertyValue Property="Label" String="{@i18n>productInfotmation}" />
                                     </Record>
+                                    <!--mandamos a llamar la info del grupo1 -->
                                     <Record Type="UI.ReferenceFacet">
                                         <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#FirstGroup" />
                                         <PropertyValue Property="Label" String="{@i18n>categoryInformation}" />
                                     </Record>
+
+                                    <!--mandamos a llamar la info del grupo2  supplier -->
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#SecondGroup"/>
+                                        <PropertyValue Property="Label" String="{@i18n>supplierInformation}"/>
+                                    </Record>
                                 </Collection>
                             </PropertyValue>
+                            <PropertyValue Property="Label" String="{@i18n>generalInformation1}" ></PropertyValue >
+                        </Record>
+
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="Order_Details/@UI.LineItem"/>
+                            <PropertyValue Property="Label" String="{@i18n>orderDetails}"/>
                         </Record>
                     </Collection>
                 </Annotation>
+            </Annotations>
+
+            <!--para traer  orderDatails -->
+            
+            <Annotations Target="NorthwindModel.Order_Detail">
+                    <!--navegaviondentro del order detail table -->
+                    <Annotation Term="UI.HeaderInfo" >
+                        <Record Type="UI.HeaderInfoType">
+                            <PropertyValue Property="TypeName" String="{@i18n>orderDetails}"/>
+                            <PropertyValue Property="TypeNamePlural" String="{@i18n>orderDetails}"/>
+                            <PropertyValue Property="Title">
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="Product/ProductName"/>
+                                </Record>
+                            </PropertyValue>
+                            <PropertyValue Property="Description">
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="Order/OrderDate"/>
+                                </Record>
+                            </PropertyValue>
+                        </Record>
+                    </Annotation>
+
+
+
+
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                    <!--agregar la referencia hacia Order/campo OrderDate -->
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Order/OrderDate"/>
+                            <PropertyValue Property="Label" String="{@i18n>orderDate}"/>
+                        </Record>
+
+
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="OrderID"/>
+                            <PropertyValue Property="Label" String="{@i18n>orderId}"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="UnitPrice"/>
+                            <PropertyValue Property="Label" String="{@i18n>unitPrice1}"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <!--first group de la entidad order_Details -->
+                <Annotation Term="UI.FieldGroup" Qualifier="FirstGroup">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value"  Path="Order/OrderDate"/>
+                                    <PropertyValue Property="Label" String="{@i18n>orderDate}"/>
+                                </Record>
+
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="OrderID"/>
+                                    <PropertyValue Property="Label" String="{@i18n>orderId}"/>
+                                </Record>
+
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="Quantity"/>
+                                    <PropertyValue Property="Label" String="{@i18n>quantity}"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+
+                <!--faceta de order details -->
+                <Annotation Term="UI.Facets" >
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#FirstGroup"/>
+                            <PropertyValue Property="Label" String="{@i18n>order}"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                
             </Annotations>
         </Schema>
     </edmx:DataServices>
